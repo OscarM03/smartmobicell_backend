@@ -4,6 +4,7 @@ django-allauth
 django-crispy-forms
 django-environ
 django-cors-headers
+djangorestframework
 gevent
 greenlet
 gunicorn
