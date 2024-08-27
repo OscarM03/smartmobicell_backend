@@ -24,3 +24,5 @@ tomli
 urllib3
 wheel
 setuptools
+python-dotenv
+
