@@ -3,6 +3,7 @@ django
 django-allauth
 django-crispy-forms
 django-environ
+django-cors-headers
 gevent
 greenlet
 gunicorn
@@ -25,4 +26,3 @@ urllib3
 wheel
 setuptools
 python-dotenv
-djangorestframework
