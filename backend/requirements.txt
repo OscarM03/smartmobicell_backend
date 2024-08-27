@@ -25,4 +25,4 @@ urllib3
 wheel
 setuptools
 python-dotenv
-
+djangorestframework
