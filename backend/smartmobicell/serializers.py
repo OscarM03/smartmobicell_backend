@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import Profile, Product, OfferProduct, DisplayProduct, PickOfTheWeek, Laptop
+from .models import Profile, Order, OrderItems, Product, CartItem, OfferProduct, DisplayProduct, PickOfTheWeek, Laptop
 
 # class ProfileSerializer(serializers.ModelSerializer):
 #     username = serializers.CharField(source='user.username')
@@ -81,6 +81,12 @@ class LaptopsSerializer(serializers.ModelSerializer):
         model = Laptop
         fields = '__all__'
 
+class CartItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CartItem
+        fields = '__all__'
+        depth = 1
+
 class ProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer(exclude_fields=['password', 'confirm_password'])
     class Meta:
@@ -101,3 +107,22 @@ class ProfileSerializer(serializers.ModelSerializer):
         instance.save()
 
         return instance
+    
+class OrderItemsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrderItems
+        fields = ['product', 'quantity']
+
+class OrderSerializer(serializers.ModelSerializer):
+    items = OrderItemsSerializer(many=True)
+
+    class Meta:
+        model = Order
+        fields = ['firstname', 'lastname', 'email', 'phone_number', 'county',  'shippingoption', 'address', 'total_amount', 'items']
+
+    def create(self, validated_data):
+        items_data = validated_data.pop('items')
+        order = Order.objects.create(**validated_data)
+        for item_data in items_data:
+            OrderItems.objects.create(order=order, **item_data)
+        return order

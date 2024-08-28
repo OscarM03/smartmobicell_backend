@@ -32,7 +32,7 @@ class Product(models.Model):
     """Products table"""
     id = ShortUUIDField(primary_key=True, unique=True, length=10, max_length=20, alphabet="abcdef123456")
     name = models.CharField(max_length=100)
-    price = models.IntegerField(max_length=100)
+    price = models.CharField(max_length=100)
     Original = models.IntegerField(default=0)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     image = models.ImageField(upload_to="images/", null=True, blank=True)
@@ -53,14 +53,14 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
+class DisplayProduct(Product):
+    """DisplayProduct table"""
+    pass  # Inherits all fields from Product
+
 class OfferProduct(Product):
     """Special offer products table"""
     description = models.CharField(max_length=100)
     period = models.CharField(max_length=100)
-
-class DisplayProduct(Product):
-    """display products table"""
-    pass
 
 class PickOfTheWeek(Product):
     """Pick of the week table"""

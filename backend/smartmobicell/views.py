@@ -6,11 +6,12 @@ from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.db.models import Q
-from .models import Product, Profile, DisplayProduct, OfferProduct, PickOfTheWeek, Laptop
+from .models import Product, Profile, DisplayProduct, OfferProduct, PickOfTheWeek, Laptop, Cart, CartItem
 from .serializers import (
     UserSerializer, ProductSerializer, 
     DisplayProductSerializer, OfferProductSerializer, 
-    PickOfTheWeekSerializer, LaptopsSerializer, ProfileSerializer
+    PickOfTheWeekSerializer, LaptopsSerializer, ProfileSerializer,
+    CartItemSerializer, OrderSerializer
 )
 
 class CreateUserView(generics.CreateAPIView):
@@ -96,3 +97,40 @@ class HomePageView(APIView):
 
         return Response(serializer.data)
 
+class AddToCartView(APIView):
+
+    def get(self, request):
+        user = request.user
+        cart = get_object_or_404(Cart, user=user)
+        cart_items = CartItem.objects.filter(cart=cart)
+        serializer = CartItemSerializer(cart_items, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        user = request.user
+        id = request.data.get('product_id')
+        product = get_object_or_404(Product, id=id)
+
+        cart,_ = Cart.objects.get_or_create(user=user)
+        cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
+
+        if not created:
+            cart_item.quantity += 1
+        cart_item.save()
+
+        return Response({"message": "Product added to cart"})
+    
+    def delete(self, request, id):
+        user = request.user
+        cart = get_object_or_404(Cart, user=user)
+        cart_item = get_object_or_404(CartItem, cart=cart, id=id)
+        cart_item.delete()
+
+        return Response({"message": "Product removed from cart"})
+    
+class CreateOrderView(APIView):
+    def post(self, request):
+        serializer = OrderSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+        return Response({"message": "Order placed successfully"})
