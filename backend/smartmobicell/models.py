@@ -58,6 +58,10 @@ class OfferProduct(Product):
     description = models.CharField(max_length=100)
     period = models.CharField(max_length=100)
 
+class DisplayProduct(Product):
+    """display products table"""
+    pass
+
 class PickOfTheWeek(Product):
     """Pick of the week table"""
     major_info = models.CharField(max_length=100)
