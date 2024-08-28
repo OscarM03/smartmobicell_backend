@@ -5,7 +5,8 @@ django-crispy-forms
 django-environ
 django-cors-headers
 djangorestframework
-rest_framework_simplejwt
+djangorestframework
+djangorestframework-simplejwt
 gevent
 greenlet
 gunicorn
